@@ -520,5 +520,3 @@ function makeTextSprite ( message, parameters )
 	},
 
 */
-
-
