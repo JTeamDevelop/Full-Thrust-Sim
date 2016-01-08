@@ -1,255 +1,522 @@
-/*
-
-<one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) <year>  <name of author>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>
-
-
-
-*/
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-var CPX={};
-
-var cpxRealms ={};
-var cpxVar={};
-cpxVar.abilities = {};
-
-cpxVar.Tag = {};
-cpxVar.Gear = {};
-
-cpxTeams = {};
-
-cpxActiveCombat = [];
-
-cpxLoad = {o:[],f:function(){},opts:{}};
+$.noty.defaults = {
+    layout: 'center',
+    theme: 'defaultTheme', // or 'relax'
+    type: 'alert',
+    text: '', // can be html or string
+    dismissQueue: true, // If you want to use queue feature set this true
+    template: '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
+    animation: {
+        open: {height: 'toggle'}, // or Animate.css class names like: 'animated bounceInLeft'
+        close: {height: 'toggle'}, // or Animate.css class names like: 'animated bounceOutLeft'
+        easing: 'swing',
+        speed: 500 // opening & closing animation speed
+    },
+    timeout: 2500, // delay for closing event. Set false for sticky notifications
+    force: false, // adds notification to the beginning of queue when set to true
+    modal: false,
+    maxVisible: 5, // you can set max visible notification for dismissQueue true option,
+    killer: false, // for close all notifications before show
+    closeWith: ['click'], // ['click', 'button', 'hover', 'backdrop'] // backdrop click will close all notifications
+    callback: {
+        onShow: function() {},
+        afterShow: function() {},
+        onClose: function() {},
+        afterClose: function() {},
+        onCloseClick: function() {},
+    },
+    buttons: false // an array of buttons
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+/* Crockford's inherit function */
+Function.prototype.inherits = function(Parent) {
+        var d = {}, p = (this.prototype = new Parent());
+        this.prototype.uber = function(name) {
+            if (!(name in d)) d[name] = 0;
+            var f, r, t = d[name], v = Parent.prototype;
+            if (t) {
+                while (t) {
+                    v = v.constructor.prototype;
+                    t -= 1;
+                }
+                f = v[name];
+            } else {
+                f = p[name];
+                if (f == this[name]) {
+                    f = v[name];
+                }
+            }
+            d[name] += 1;
+            r = f.apply(this, Array.prototype.slice.apply(arguments, [1]));
+            d[name] -= 1;
+            return r;
+        };
+        return this;
+};
 
-cpxSaveIDB = function (uid,sdoc) {
-
-	cpxDB.put(sdoc).then(function () {
-    	return cpxDB.get(uid);
-  	}).then(function (doc) {
-    	console.log('We stored a ' + doc.type);
-  	}).catch(function (err) {
-  		console.log(err);
-	});
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * Sets prototype of this function to an instance of parent function
+ * @param {function} parent
+ */
+Function.prototype.extend = Function.prototype.extend || function(parent) {
+	this.prototype = Object.create(parent.prototype);
+	this.prototype.constructor = this;
+	return this;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-cpxVar.objectSave = ["_realm","_parent","children","visible"];
-CPX.Object=function () {
-	this._realm="";
-	this._parent = "";
-	this.children=[];
-
-	this.visible=true;
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
 }
-CPX.Object.prototype.initialize = function () {
-
-
-
+//Returns true if the string has the item
+String.prototype.test = function(item) {
+	if( this.indexOf(item) > -1 ) { return true; }
+	
+	return false;
 }
 
-CPX.Object.prototype.save = function () {
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-}
-CPX.Object.prototype.load = function () {
+//Array Extensions and Functions
 
+//Returns a readable text string separated by commas with the last given and and
+Array.prototype.readable = function() {
+	if (this.length<2) {return this;}
+	var ar=this;
+	var r=[ar.slice(0, -1).join(', '), this.slice(-1)[0]].join(' and ');
+	return r;
 }
-CPX.Object.prototype.setOptions = function (opts) {
-	opts = typeof opts === "undefined" ? {} : opts;
-	for (var x in opts) {
-		this[x]=opts[x];
+//Returns true if the array has the item
+Array.prototype.test = function(item) {
+	if( this.indexOf(item) > -1 ) { return true; }
+	
+	return false;
+}
+//Returns the last item in an array
+Array.prototype.last = function() {
+	return this[this.length-1];
+}
+//Returns the index and object of an array given object propery value
+Array.prototype.objSearch = function(prop,val) {
+	var i=-1, o={}, j=0;
+
+	for(j=0;j<this.length;j++) {
+		if(this[j][prop]==val) { 
+			i=j; 
+			o=this[j];
+		}
 	}
+
+	return [i,o];
 }
-CPX.Object.prototype.lookup = function (uid) {
-	return cpxRealms[this._realm].db[uid];
-}
-CPX.Object.prototype.realm = function () {
-	return cpxRealms[this._realm];
-}
-CPX.Object.prototype.parent = function () {
-	if(this._parent == this._realm) { return cpxRealms[this._realm]; }
-	return this.lookup(this._parent);
-}
-CPX.Object.prototype.child = function (i) {
-	return this.lookup(this.children[i]);
+
+//Finds the maximum value of a provided array
+function ArrayMax (arr) {
+	var max = arr[0];
+	var maxIndex = 0;
+
+	for (var i = 1; i < arr.length; i++) {
+		if (arr[i] > max) {
+			maxIndex = i;
+			max = arr[i];
+		}
+	}
+	return [maxIndex,max];
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+function regularPolygon(x, y, radius, sides) {
+	var crd = [], pts="", nx=0, ny=0;
+
+	/* 1 SIDE CASE */
+	if (sides == 1)
+	return [[x, y]];
+
+	/* > 1 SIDE CASEs */
+	for (var i = 0; i < sides; i++) {
+		nx = (x + (Math.sin(2 * Math.PI * i / sides) * radius));
+		ny = (y - (Math.cos(2 * Math.PI * i / sides) * radius));
+		pts+=nx+","+ny+" ";
+		crd.push([nx,ny]);
+	}
+
+	var pathString = "M"+ crd[0][0] + " " + crd[0][1];
+	for(i=1 ; i<crd.length; i++) {
+		pathString+=" L" + crd[i][0] + " " + crd[i][1];
+	}
+	pathString+= " z";
+	
+	return {array:crd,path:pathString,text:pts};
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-CPX.RNG = function(seed){
-	this.seedrnd = typeof seed === "undefined" ? Math.random : new xor4096(seed);
-	this.RND=this.seedrnd;
+//SVG Tools
+function genWedgeString (startX, startY, startAngle, endAngle, radius){
+        var x1 = startX + radius * Math.cos(Math.PI * startAngle/180);
+        var y1 = startY + radius * Math.sin(Math.PI * startAngle/180);
+        var x2 = startX + radius * Math.cos(Math.PI * endAngle/180);
+        var y2 = startY + radius * Math.sin(Math.PI * endAngle/180);
+
+        var pathString = "M"+ startX + " " + startY + " L" + x1 + " " + y1 + " A" + radius + " " + radius + " 0 0 1 " + x2 + " " + y2 + " z";
+
+        return pathString;
+
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Area & Distance calculations
+
+//calculates a random x,y point within a circle
+function WithinCircle(cx,cy,r,rng){
+	rng = typeof rng === "undefined" ? Math.random : rng;
+	//insures the points fall within a circle 
+	var angle = rng()*Math.PI*2;
+	var x = Math.cos(angle)*rng()*r;
+	var y = Math.sin(angle)*rng()*r;
+	
+	//adjusts center point of the circle
+	x+=cx;
+	y+=cy;
+
+	return [x,y];
+}
+//Checks whether a point is within a circle
+function CheckWithinCircle (px,py,cx,cy,r){
+	var d=Math.sqrt(Math.pow(px-cx,2)+Math.pow(py-cy,2));
+	if (d<r){return true;}
+	return false;
+}
+
+//Returns the distance between two points
+function Distance (loca,locb){
+	if(loca.length==2) {loca[2]=0;}
+	if(locb.length==2) {locb[2]=0;}
+	var d=Math.sqrt(Math.pow(loca[0]-locb[0],2)+Math.pow(loca[1]-locb[1],2)+Math.pow(loca[2]-locb[2],2));
+	return d;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function fiftyFifty() {
+	if (Math.random()>0.5) { return true;}
+	return false;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Hex and RGB functions
+
+function rgbToHex(R,G,B) {return toHex(R)+toHex(G)+toHex(B)}
+function toHex(n) {
+ n = parseInt(n,10);
+ if (isNaN(n)) return "00";
+ n = Math.max(0,Math.min(n,255));
+ return "0123456789ABCDEF".charAt((n-n%16)/16)
+      + "0123456789ABCDEF".charAt(n%16);
+}
+
+function hexToR(h) {return parseInt((cutHex(h)).substring(0,2),16)}
+function hexToG(h) {return parseInt((cutHex(h)).substring(2,4),16)}
+function hexToB(h) {return parseInt((cutHex(h)).substring(4,6),16)}
+function cutHex(h) {return (h.charAt(0)=="#") ? h.substring(1,7):h}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//makes a unique id for various objects that is n characters long
+makeUID = function (n) {
+	n = typeof n === "undefined" ? 12 : n;
+	var text = "";
+	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	
+	for( var i=0; i < n; i++ ){
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	
+   	return text;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+function Prufer(a) {
+  var tree = [];
+  var T = Array.apply(null, Array(a.length + 2)).map(function(_, i) { return i; });
+  var deg = Array.apply(null, Array(1*T.length)).map(function() { return 1; });
+  a.map(function(i) { deg[i]++; });
+  
+  for(var i = 0; i < a.length; i++) {
+    for(var j = 0; j < T.length; j++) {
+      if(deg[T[j]] === 1) {
+        tree.push([a[i], T[j]]);
+        deg[a[i]]--;
+        deg[T[j]]--;
+        break;
+      }
+    }
+  }
+  
+  var last = T.filter(function(x) { return deg[x] === 1; });
+  tree.push(last);
+  
+  return tree;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//Random name generator inspired from the game Elite
+NameGenerator = function (state) {
+ 
+    // Syllables shamelessly stolen from elite
+    var syllables = 'folexegezacebisousesarmaindirea.eratenberalavetiedorquanteisrion',
+        vocals = 'aeiou';
+ 
+    // Some improvements
+    var vocalMustFollow = 'tdbr',
+        notFollowdBySelf = 'rstie',
+        onlyAtStart = 'xyz',
+        badSoundStart = ['xc', 'rc', 'bf', 'qc', 'fc', 'vr', 'vc'],
+        badSoundMiddle = ['eo', 'ou', 'ae', 'ea', 'sr', 'sg', 'sc', 'nv', 'ng', 'sb', 'sv'];
+ 
+    function isValid(previous, next) {
+ 
+        var pa = previous[0],
+            pb = previous[1],
+            na = next[0];
+ 
+        if (
+            // Block out eveything that's too similar by comparing the initial
+            // characters
+               (Math.abs(pa.charCodeAt(0) - na.charCodeAt(0)) === 1)
+ 
+            // Prevent specific letter doubles in the middle of the "word"
+            || (notFollowdBySelf.indexOf(pb) !== -1 && pb === na)
+ 
+            // A vocal must follow the last character of the previous syllable
+            || (vocalMustFollow.indexOf(pb) !== -1 && vocals.indexOf(na) === -1)
+ 
+            // Block the second syllable in case it's initial character can only
+            // occur at the start
+            || (onlyAtStart.indexOf(na) !== -1)
+ 
+            // Block other combinations which simply do not sound very well
+            || (badSoundStart.indexOf(pa + na) !== -1)
+ 
+            // Block other combinations which simply do not sound very well
+            || (badSoundMiddle.indexOf(pb + na) !== -1)
+ 
+            // Block double syllable pairs
+            || (previous === next)) {
+ 
+            return false;
+ 
+        } else {
+            return true;
+        }
+ 
+    }
+ 
+    // LCG
+    state = state || 0;
+    function nextInt() {
+        state = (214013 * state + 2531011) % 0x80000; // Loops after 262144
+        return state;
+    }
+ 
+    // Name generator
+    return function() {
+ 
+        var bitIndex = 0;
+        while(true) {
+ 
+            bitIndex = 0;
+ 
+            // We have 18 bits of "randomness"
+            var seed = nextInt(),
+                l = (seed >> 15);
+ 
+            // take the last 3 bytes for the length of the name
+            // 0123456
+            // 2223213
+            l = (l <= 2 || l === 4) ? 2 : (l === 5 && (seed & 0xfff) < 100 ? 1 : 3);
+ 
+            var str = '',
+                previous = null,
+                next,
+                syllableIndex = 0,
+                split = l === 2 && (seed & 0x7fff) > 32000,
+                i = 0;
+ 
+            while(i < l) {
+ 
+                syllableIndex = (seed >> bitIndex) & 0x1f;
+                next = syllables.substr(syllableIndex * 2, 2);
+ 
+                if (!previous || isValid(previous, next)) {
+                    str += next;
+                    previous = next;
+                    i++;
+ 
+                } else {
+                    break;
+                }
+ 
+                if (split && bitIndex === 5) {
+                    previous = '.';
+                    str += previous;
+                }
+ 
+                bitIndex += 5;
+ 
+            }
+ 
+            if (bitIndex === 5 * l) {
+                break;
+            }
+ 
+        }
+ 
+        return str.replace(/\.+/g, '.').replace(/^.|\../g, function(c) {
+            return c.toUpperCase();
+ 
+        }).replace(/\./g, ' ');
+ 
+    };
 
 };
-CPX.RNG.prototype.rndInt = function (min, max) {
-    return Number(Math.floor(this.seedrnd() * (max - min + 1)) + min);
-}
-//Random int exclude
-CPX.RNG.prototype.rndIntEx = function (min, max, exc) {
-	var n=exc;
-	do {
-		n=this.rndInt(min,max);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//Three JS utility
+function makeTextSprite ( message, parameters )
+{
+
+	// function for drawing rounded rectangles
+	function roundRect(ctx, x, y, w, h, r) 
+	{
+    	ctx.beginPath();
+    	ctx.moveTo(x+r, y);
+    	ctx.lineTo(x+w-r, y);
+    	ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+    	ctx.lineTo(x+w, y+h-r);
+    	ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+    	ctx.lineTo(x+r, y+h);
+    	ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+    	ctx.lineTo(x, y+r);
+    	ctx.quadraticCurveTo(x, y, x+r, y);
+    	ctx.closePath();
+    	ctx.fill();
+		ctx.stroke();   
 	}
-	while (n==exc);
 
-    return n;
-}
-//Roll some dice of the same type passed a nested dice array in the following format:
-// [n=number, d= dice type, b=bonus]
-CPX.RNG.prototype.Dice = function (darray) {
-	var x=0, T=this;
-
-	//for each dice set provided
-	darray.forEach(function(cd){
-		//0=n so it loops through the number of dice
-		for(var i=0; i < cd[0] ; i++){
-			//1 = dice type
-			x+=T.rndInt(1, cd[1]);
-		}
-		//2 if there is the bonus
-		if (cd.length==3) { x+= cd[2]; }
-	});
-
-    return x;
-}
-CPX.RNG.prototype.multiRoll = function (min, max, num) {
-    var x=0;
-	for(var i=0;i<num;i++){
-		x+=this.rndInt(min, max);
-	}
-    return x;
-}
-CPX.RNG.prototype.FateRoll = function (){ return this.multiRoll (1, 3, 4)-8; }
-CPX.RNG.prototype.DWRoll = function  () {return this.multiRoll (1, 6, 2);}
-CPX.RNG.prototype.EvenRoll = function () {return (this.rndInt(1,6)-this.rndInt(1,6));}
-// @returns {any} Randomly picked item, null when length=0
-CPX.RNG.prototype.rndArray = function (array) {
-	if (!array.length) { return null; }
-	return array[Math.floor(this.RND() * array.length)];
-}
-// @returns {any} Randomly picked item from an object holding objects, null when length=0
-CPX.RNG.prototype.rndObj = function (obj) {
-	var oa=[], i=0;
-	for (var ox in obj) {
-		i++;
-		oa.push(ox);
-	}
-	if (!oa.length) { return null; }
-	return obj[this.rndArray(oa)];
-}
-// @returns {array} New array with randomized items
-CPX.RNG.prototype.shuffleAr = function (array) {
-  	var currentIndex = array.length, temporaryValue, randomIndex ;
-
-  	// While there remain elements to shuffle...
-  	while (0 !== currentIndex) {
-
-    	// Pick a remaining element...
-    	randomIndex = Math.floor(this.seedrnd() * currentIndex);
-    	currentIndex -= 1;
-
-    	// And swap it with the current element.
-    	temporaryValue = array[currentIndex];
-    	array[currentIndex] = array[randomIndex];
-    	array[randomIndex] = temporaryValue;
-  	}
-
-  	return array;
-}
-CPX.RNG.prototype.makeLinks = function (area) {
-	var i = 0, j = 1, links=[];
-	var nc= area.nchild-area.children.length, nz = area.nzones-Object.keys(area.zones).length;
-
-	for (var x in area.links) {
-		area.links[x].forEach(function(l){
-			links.push([x,l]);
-		});
-	}
+	if ( parameters === undefined ) parameters = {};
 	
-	//random	
-	if(type == "random") {
-		for (i = 0 ; i < n-2 ; i++ ) {
-			links.push(RN.rndInt(0,n-1)); 
-		}
-	}
-	//tower
-	else if(type == "tower") {
-		while (i< n-2) {
-			if( RN.RND() < 0.5 ) { links.push(j); i++; }
-			else {
-				links.push(j);
-				links.push(j);
-				i+=2;
-			}
-			j++;		
-		}
-	}
-	//wide
-	else if(type == "wide") {
-		var ncore=[2,3,3,4,4,5,5,6], m=-1, k=0, picked=[];
-		while (i< n-2) {
-			m = RN.rndArray(ncore);
-			if ( i+m > n-2 ) { m = n-2 - i; }
+	var fontface = parameters.hasOwnProperty("fontface") ? 
+		parameters["fontface"] : "Arial";
+	
+	var fontsize = parameters.hasOwnProperty("fontsize") ? 
+		parameters["fontsize"] : 18;
+	
+	var borderThickness = parameters.hasOwnProperty("borderThickness") ? 
+		parameters["borderThickness"] : 4;
+	
+	var borderColor = parameters.hasOwnProperty("borderColor") ?
+		parameters["borderColor"] : { r:0, g:0, b:0, a:1.0 };
+	
+	var backgroundColor = parameters.hasOwnProperty("backgroundColor") ?
+		parameters["backgroundColor"] : { r:255, g:255, b:255, a:1.0 };
 		
-			j = RN.rndInt(0,n-1);
-			while ( picked.test(j) ) { j = RN.rndInt(0,n-1); }
-			picked.push(j);
+	var canvas = document.createElement('canvas');
+	var context = canvas.getContext('2d');
+	context.font = "Bold " + fontsize + "px " + fontface;
+    
+	// get size data (height depends only on font size)
+	var metrics = context.measureText( message );
+	var textWidth = metrics.width;
 	
-			for(k=0 ; k < m ; k++) {
-				links.push(j);
-			}			
-			
-			i+= m;		
-		}
-	}
+	// background color
+	context.fillStyle   = "rgba(" + backgroundColor.r + "," + backgroundColor.g + ","
+								  + backgroundColor.b + "," + backgroundColor.a + ")";
+	// border color
+	context.strokeStyle = "rgba(" + borderColor.r + "," + borderColor.g + ","
+								  + borderColor.b + "," + borderColor.a + ")";
 
-	var linkPrufer = Prufer(links);
+	context.lineWidth = borderThickness;
+	roundRect(context, borderThickness/2, borderThickness/2, textWidth + borderThickness, fontsize * 1.4 + borderThickness, 6);
+	// 1.4 is extra height factor for text below baseline: g,j,p,q.
 	
-	var r=[], innerLinks = {};
-	linkPrufer.forEach(function(l) {
-		if( !r.test(l[0]) ) {  
-			r.push(l[0]);
-			innerLinks[l[0]]=[l[1]];		
-		}
-		else {
-			innerLinks[l[0]].push(l[1]);
-		}
-		if( !r.test(l[1]) ) {  
-			r.push(l[1]);
-			innerLinks[l[1]]=[l[0]];		
-		}
-		else {
-			innerLinks[l[1]].push(l[0]);
-		}
-	});
+	// text color
+	context.fillStyle = "rgba(0, 0, 0, 1.0)";
 
-	return innerLinks;
+	context.fillText( message, borderThickness, fontsize + borderThickness);
+	
+	// canvas contents will be used for a texture
+	var texture = new THREE.Texture(canvas) 
+	texture.needsUpdate = true;
+
+	var spriteMaterial = new THREE.SpriteMaterial( { map: texture } );
+	var sprite = new THREE.Sprite( spriteMaterial );
+	sprite.scale.set(100,50,1.0);
+	return sprite;	
 }
 
-cpxRNG = new CPX.RNG();
-cpxRNDName = NameGenerator(cpxRNG.rndInt(1,9999999));
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+
+/*
+	//returns a random game object based upon the given object text name - may be based on tag lookup
+	RNDGobj: function(objtxt,tags,andor,unique) {
+		tags = typeof tags === "undefined" ? [] : tags;
+		andor = typeof andor === "undefined" ? "or" : andor;
+		unique = typeof unique === "undefined" ? "true" : andor;
+
+		var goa=[], gox={}, regex="", re={}, l=tags.length, i=0;
+		//have to create a regular expression because we are passing a variable (tag) to search
+		//http://stackoverflow.com/questions/3172985/javascript-use-variable-in-string-match
+		if(l>0) {
+			if (andor == "or")  {
+				for (i;i<l;i++) { 
+					regex += tags[i]; 
+					if(i!=l-1) {regex+="|";}
+				}
+			}
+			else {
+				for (i;i<l;i++) { 
+					regex += "(?=.*"+tags[i]+")"; 
+				}
+			}
+			re= new RegExp(regex,'g');
+		}
+
+		for (var x in CP.game[objtxt]) {
+			gox=CP.game[objtxt][x];
+			// if it is private it cannot be returned in a random search
+			private = typeof gox.private === "undefined" ? false : gox.private;
+			if (private) continue;
+			
+			//if it doesn't have tags, give it a zero length string
+			gox.tags = typeof gox.tags === "undefined" ? "" : gox.tags;
+
+			if(regex.length>0) {
+				if (re.test(gox.subtype)) {goa.push(gox);}
+				else if (re.test(gox.tags)) {goa.push(gox);} 
+			}
+			else {goa.push(gox);}
+		}
+		return goa.random();
+	},
+
+*/
