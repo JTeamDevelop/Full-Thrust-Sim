@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+  <title>FTS</title>
+  
+  <link rel="stylesheet" type="text/css" href="src/fts.css">
+  <link rel="stylesheet" type="text/css" href="src/lib/animate.css">
+  <link rel="stylesheet" type="text/css" href="src/lib/jquery-ui.min.css">
+  
+  <style type='text/css'>
+    
+  </style>
+</head>
+
+<body>
+  <div id="ftscanvas"></div>
+
+  <div class="header" id="header-main"><h1>FTS</h1></div>
+
+	<div class="menu" id="menu-main">
+  		<ul>
+  			<li id="slideMenu"><img src="images/menu3_png_128.png" height="32" width="22"/></li>
+  			<li id="saveRealm" >Save</li>
+  			<li id="infoPlayer" >Player</li>
+		</ul>
+		<div id="mainmenu-slideout">
+			<div id="SectorGen">New Galaxy</div>
+			<div id="newRealm">New Realm</div>
+			<div id="clearDB">Clear Epic Database</div>
+		</div>
+	</div>	
+  </div>
+
+  <div class="mainbars" id="mRight">
+    <div class="content" id="mRightContent"></div>
+  </div>
+
+  <div class="mainbars" id="mLeft">
+    <div class="content" id="mLeftContent"></div>
+    <div class="content" id="uActive"></div>
+    <div class="content" id="pOptions"></div>
+    <div class="content" id="displayNav"></div>
+  </div>
+
+  <div class="center" id="rTimer"></div>
+
+  <div id="moreInfo"></div>
+
+  <div id="footer">
+    The CPX Generators is &copy;2015 <a href="mailto:jteamwebdesign@gmail.com">JTeam Design</a>
+    </br>Code is released under GPL3.
+  </div>
+
+  <div class="hidden">
+    <div class="content" id="about">
+      <p>This project would not have been possible without God. His gifts of code and wisdom enabled everything you see.</p>
+      <p><em>Every good and perfect gift is from above, coming down from the Father of the heavenly lights, who does not change like shifting shadows. </em>(<a href="http://www.biblegateway.com/passage/?search=James%201:17&version=NIV" target="_blank">James 1:17</a>)</p>
+      </br><p><a href="mailto:jteamwebdesign@gmail.com">JTeam</a></p>
+    </div>
+
+  </div>
+
+</body>
+
+  <script type="text/javascript" src="src/lib/xor4096.min.js"></script>
+  <script type="text/javascript" src="src/lib/jquery-1.11.3.min.js"></script>
+  <script type="text/javascript" src="src/lib/jquery-ui.min.js"></script> 
+  <script type="text/javascript" src="src/lib/jquery.noty.packaged.min.js"></script>
+  
+  <script type="text/javascript" src="src/lib/localforage.min.js"></script>
+
+  <script type="text/javascript" src="src/lib/raphael-min.js"></script>
+
+  <script type="text/javascript" src="src/cpx_utilities.js"></script>
+  <script type="text/javascript" src="src/cpx_objects.js"></script>
+
+  <script type="text/javascript" src="src/fts_core.js"></script>
+  <script type="text/javascript" src="src/fts_game.js"></script>
+  
+</html>

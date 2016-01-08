@@ -1,0 +1,493 @@
+/* ==========================================================================
+   HTML5 Boilerplate styles - h5bp.com (generated via initializr.com)
+   ========================================================================== */
+
+html,
+button,
+input,
+select,
+textarea {
+    color: #222;
+}
+
+body {
+    font-size: 1em;
+}
+
+::-moz-selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+::selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+img {
+    vertical-align: middle;
+}
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.chromeframe {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}
+
+/* ===== Initializr Styles ==================================================
+   Author: Jonathan Verrecchia - verekia.com/initializr/responsive-template
+   ========================================================================== */
+
+body {
+    font: 16px Helvetica, Helvetica Neue, Arial;
+    background: rgb(192, 192, 192);
+    margin:0;
+    overflow: hidden;
+}
+
+.wrapper {
+    width: 96%;
+    margin: 0 2%;
+}
+
+/* ===================
+    ALL: Orange Theme
+   =================== */
+
+.title {
+    color: white;
+}
+
+/* ==============
+    MOBILE: Menu
+   ============== */
+
+nav ul {
+    margin: 0;
+    padding: 0;
+}
+
+nav a {
+    display: block;
+    margin-bottom: 10px;
+    padding: 15px 0;
+
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+
+    color: white;
+    background: #e44d26;
+}
+
+nav a:hover,
+nav a:visited {
+    color: white;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* ===============
+    ALL: IE Fixes
+   =============== */
+
+.ie7 .title {
+    padding-top: 20px;
+}
+
+/* ==========================================================================
+   Containers
+   ========================================================================== */
+#menu-main {
+  position: fixed;
+  top:0em;
+  height:3em;
+  padding-top:1em;
+  left:1em;
+  z-index: 99;
+}
+#mainmenu-slideout {
+  position: absolute;
+  display:none;
+  top:1.75em;
+  left:.75em;
+  width:175px;
+  margin:0.5em;
+  padding:0.5em;
+  background-color:lightgray;
+  border-radius:5px;
+  z-index:55;
+  border-radius:5px;
+  border:1px solid black;
+}
+#mainmenu-slideout div {
+  padding:0.25em;
+}
+#mainmenu-slideout div:hover {
+  cursor:pointer;
+  text-decoration:underline;
+  background-color:white;
+}
+
+
+#rTimer{
+  position:fixed;
+  top:4em;
+  left:40%;
+  width:20%;
+  max-height:50px;
+  background-color:rgba(255, 255, 255, 0.5);
+  border-radius:5px;
+  font-weight:bold;
+}
+#moreInfo{
+  
+}
+#footer{
+  position: fixed;
+  left:20%;
+  right:20%;
+  bottom:0;  
+  margin: 0 auto;
+  text-align: center;
+  font-size:0.75em;
+}
+
+/* ==========================================================================
+   Mainbars styles
+   ========================================================================== */
+.mainbars {
+  display:none;
+  position: fixed;
+  margin:1em;
+  top:4em;
+  bottom:0;
+  background-color:rgba(255, 255, 255, 0.5);
+  border-radius:5px;
+  overflow-y: hidden;
+  z-index: 2;
+}
+#mRight{
+  right:0;
+  width:250px;
+}
+#mLeft{
+  left:0;
+  width:250px;
+}
+.mainbars h2{
+  margin:0;
+}
+.mainbars .header{
+  background-color:silver;
+  border-radius:5px;
+  margin:0.25em 0em;
+  padding:0.25em 0em;
+}
+
+/* ==========================================================================
+   FTS - Ship Motion
+   ========================================================================== */
+#ftscanvas{
+  position: relative;
+  margin: auto;
+  width:1000px;
+  height:750px;
+}
+#ftscanvas svg{
+  margin: auto;
+}
+
+h3.fts {
+  margin:0.25em;
+}
+h4.fts {
+  margin:0.25em;
+}
+.shipInfo {
+  margin-bottom:0.5em;
+}
+#uActive .weapon {
+  font-size: 13px;
+  padding: 2px;
+  border-radius:5px;
+}
+.weapon.available {
+  background-color:rgba(0,255,0,0.2);
+  margin:1px;
+}
+.weapon.selected {
+  background-color:rgba(255,0,0,0.5);
+}
+.weapon.available.selected {
+  background-color:rgba(0,255,0,0.7);
+}
+
+.bMove{
+  width:35px;
+  height:35px;
+  margin:0.25em;
+  padding:0.25em;
+  background-color:grey;
+  border-radius:5px;
+}
+#mLeft .fts.buttons {
+  margin:0px;
+  padding:0px;
+}
+#mLeft .fts.buttons button {
+  background-color:darkgrey;
+  border: 3px solid grey;
+  border-radius:10px;
+  font-weight:bold;
+  font-size:14px;
+  padding:0.7em;
+}
+
+/* ==========================================================================
+   Menu bars custom styles
+   ========================================================================== */
+
+.menu ul{
+  padding:0;
+  margin:0;
+}
+.menu li{
+  border:1px solid black;
+  border-radius:5px;
+  padding:0.25em 0.5em;
+  display:inline-block;
+  font-size:1.0em;
+  cursor:pointer;
+  background-color:Beige;
+}
+.menu li:hover {
+  text-decoration:underline;
+  background-color:DarkKhaki;
+}
+
+
+/* ==========================================================================
+   Custom styles
+   ========================================================================== */
+@font-face{
+ font-family: Augusta;
+ src: url(Augusta.ttf);
+}
+@font-face {
+    font-family: Xolonium;
+    src: url(Xolonium-Regular.otf);
+}
+p {
+  margin: 0.5em;
+}
+.content {
+  padding:0.5em;
+}
+.header{
+  
+}
+#header-main h1{
+  position: fixed;
+  top:  0.3em;
+  right: 1em;
+  font-family: Xolonium;
+  margin:0;
+}
+.noreveal {
+  display:none;
+}
+.center{
+  text-align: center;
+}
+
+/* ==========================================================================
+   Buttons classes
+   ========================================================================== */
+.buttons {
+    padding: 3px;
+    margin: 3px;
+}
+.buttons.center {
+    padding-top: 0.6em;
+    margin-top: 0.6em;
+    text-align: center;
+}
+.buttons button {
+    background: #876;
+    border: none;
+    padding: 0.3em 0.7em;
+    margin: 0.2em;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.buttons button:hover {
+    background: #987;
+}
+.buttons button + button {
+    margin-left: 0.3em;
+}
+.buttons button[disabled], .buttons button[disabled]:hover {
+    background: #ba9;
+    color: #dcb;
+    cursor: default;
+}
+
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+
+.ir {
+    background-color: transparent;
+    border: 0;
+    overflow: hidden;
+    *text-indent: -9999px;
+}
+
+.ir:before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 150%;
+}
+
+.fixed{
+	position: fixed;
+}
+
+.hidden {
+    display: none !important;
+    visibility: hidden;
+}
+
+.visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus {
+    clip: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    width: auto;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+.clearfix:before,
+.clearfix:after {
+    content: " ";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.clearfix {
+    *zoom: 1;
+}
+
+/* ==========================================================================
+   Print styles
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
