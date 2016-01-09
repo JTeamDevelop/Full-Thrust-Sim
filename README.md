@@ -1,5 +1,5 @@
 # Full-Thrust-Sim
-JavaScript simulation of the Full Thrust tabletop spaceship war game. 
+A JavaScript simulation of the Full Thrust tabletop spaceship war game. 
 
 <em>This is free because the grace of God is free through His son Jesus.</em>
 
