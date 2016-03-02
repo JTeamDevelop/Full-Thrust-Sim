@@ -12,6 +12,8 @@ Our goal was also to make it easily modified. We want players to be able to add 
 
 We recognize we need graphics – all off the ships currently use the same image. We are coders, not graphics artists. But we’re looking for more art. Optimally we’ll get generic images for every class of ship. The images will either be SVG or PNG (256x256) oriented with their noses pointed north.  
 
+**This is not complete and fully functioning project.**
+
 What works:
 -	Hot seat play 
 -	Defining ships via JSON
